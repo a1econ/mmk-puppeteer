@@ -1,6 +1,5 @@
 import express from 'express';
-import fs from 'fs';
-import puppeteer from 'puppeteer-core';
+import puppeteer from 'puppeteer';
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -15,8 +14,7 @@ app.get('/json', async (req, res) => {
 
   try {
     const browser = await puppeteer.launch({
-      headless: 'new',
-      executablePath: '/usr/bin/chromium-browser',
+      headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
@@ -35,13 +33,13 @@ app.get('/json', async (req, res) => {
 
     await page.goto(JSON_URL, { waitUntil: 'networkidle2' });
 
-    const responseBody = await page.evaluate(() => document.body.innerText);
-    const jsonData = JSON.parse(responseBody);
+    const body = await page.evaluate(() => document.body.innerText);
+    const jsonData = JSON.parse(body);
 
     await browser.close();
     res.json(jsonData);
   } catch (error) {
-    console.error('❌ Σφάλμα:', error);
+    console.error('❌ Σφάλμα:', error.message);
     res.status(500).send('Internal Server Error');
   }
 });
