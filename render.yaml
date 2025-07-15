@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: mmk-puppeteer
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    runtime: node
+    autoDeploy: true
